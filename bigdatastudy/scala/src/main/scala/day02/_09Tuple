@@ -1,0 +1,74 @@
+scala> val tp = (1,true,"xxoo",Unit)
+tp: (Int, Boolean, String, Unit.type) = (1,true,xxoo,object scala.Unit)
+
+scala> tp._0
+<console>:13: error: value _0 is not a member of (Int, Boolean, String, Unit.type)
+       tp._0
+          ^
+
+scala> tp._1
+res15: Int = 1
+
+scala> tp._2
+res16: Boolean = true
+
+scala> tp._3
+res17: String = xxoo
+
+scala> tp._3
+res18: String = xxoo
+
+scala> tp._4
+res19: Unit.type = object scala.Unit
+
+scala> tp._5
+<console>:13: error: value _5 is not a member of (Int, Boolean, String, Unit.type)
+       tp._5
+          ^
+
+scala> tp.product
+productArity   productElement   productIterator   productPrefix
+
+scala> tp.productIterator.for
+forall   foreach   formatted
+
+scala> tp.productIterator.foreach(print)
+1truexxooobject scala.Unit
+scala> tp.productIterator.foreach(println)
+1
+true
+xxoo
+object scala.Unit
+
+scala> tp.swap
+<console>:13: error: value swap is not a member of (Int, Boolean, String, Unit.type)
+       tp.swap
+          ^
+
+scala> val tp1 = ("a",97)
+tp1: (String, Int) = (a,97)
+
+scala> tp1.swap
+   def swap: (Int, String)
+
+scala> tp1.swap
+res24: (Int, String) = (97,a)
+
+scala> val tp1 = ("a",97,1)
+tp1: (String, Int, Int) = (a,97,1)
+
+scala> tp1.swap
+<console>:13: error: value swap is not a member of (String, Int, Int)
+       tp1.swap
+           ^
+
+
+//高级取值方法
+scala> val t,(x,y,z) = ("a",1,2.0)
+t: (String, Int, Double) = (a,1,2.0)
+x: String = a
+y: Int = 1
+z: Double = 2.0
+
+scala> x
+res9: String = a

@@ -1,0 +1,14 @@
+
+//部分函数参数函数
+
+scala> def m(a:Int,b:Int)= a +b
+m: (a: Int, b: Int)Int
+
+scala> m(1,_:Int)
+res35: Int => Int = <function1>
+
+scala> var partM = m(1,_:Int)
+partM: Int => Int = <function1>
+
+scala> partM(12)
+res36: Int = 13

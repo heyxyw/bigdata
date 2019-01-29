@@ -1,0 +1,203 @@
+    scala> list
+    res39: List[Int] = List(1, 2, 3)
+
+    scala> list1
+    res40: List[Int] = List(22, 33, 44)
+
+scala> list.::(0)
+res13: List[Int] = List(0, 1, 2, 3, 4, 5, 6)
+
+scala> 0 :: list
+res14: List[Int] = List(0, 1, 2, 3, 4, 5, 6)
+
+scala> 0 +: list
+res15: List[Int] = List(0, 1, 2, 3, 4, 5, 6)
+
+scala> list.+:(0)
+res16: List[Int] = List(0, 1, 2, 3, 4, 5, 6)
+
+scala> 0 :+ list
+<console>:13: error: value :+ is not a member of Int
+       0 :+ list
+         ^
+
+scala> list.:+(0)
+res18: List[Int] = List(1, 2, 3, 4, 5, 6, 0)
+
+
+============================================================================
+
+
+scala> import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ListBuffer
+
+scala>  val lst1 = new ListBuffer[Int]
+lst1: scala.collection.mutable.ListBuffer[Int] = ListBuffer()
+
+scala> lst1 += 3
+res21: lst1.type = ListBuffer(3)
+
+scala> lst1 += 3
+res22: lst1.type = ListBuffer(3, 3)
+
+scala> lst1.append
+append   appendAll
+
+scala> lst1.append(4)
+
+scala> lst1
+res24: scala.collection.mutable.ListBuffer[Int] = ListBuffer(3, 3, 4)
+
+scala> val lst2 = List
+List   ListBuffer
+
+scala> val lst2 = List
+   val List: collection.immutable.List.type
+
+scala> val lst2 = ListBuffer(1,2,3)
+lst2: scala.collection.mutable.ListBuffer[Int] = ListBuffer(1, 2, 3)
+
+scala> lst2 ++= lst2
+res25: lst2.type = ListBuffer(1, 2, 3, 1, 2, 3)
+
+scala> lst2 ++= lst1
+res26: lst2.type = ListBuffer(1, 2, 3, 1, 2, 3, 3, 3, 4)
+
+
+scala> val lst3 = lst1 ++ lst2
+lst3: scala.collection.mutable.ListBuffer[Int] = ListBuffer(3, 3, 4, 1, 2, 3, 1, 2, 3, 3, 3, 4)
+
+
+=============================================================================
+
+    // ::: list 合并
+    scala> var list2 =  list:::list1
+    list2: List[Int] = List(1, 2, 3, 22, 33, 44)
+
+    scala> list2.sort
+    sortBy   sortWith   sorted
+
+    scala> list2.sort
+    sortBy   sortWith   sorted
+
+    //
+    scala> list2.sorted
+    res34: List[Int] = List(1, 2, 3, 22, 33, 44)
+
+    scala> list2.sortBy
+    def sortBy[B](f: Int => B)(implicit ord: scala.math.Ordering[B]): List[Int]
+
+    scala> list2.sortBy(x => x)
+    res35: List[Int] = List(1, 2, 3, 22, 33, 44)
+
+    scala> list2.sortBy(x => -  x)
+    res36: List[Int] = List(44, 33, 22, 3, 2, 1)
+
+    //定义一个list ,里面是元组
+    scala> val wds = List(("a",23),("b",34),("c",30))
+    wds: List[(String, Int)] = List((a,23), (b,34), (c,30))
+
+    scala> wds.sortWith((x,y) => x._2 > y._2)
+    res37: List[(String, Int)] = List((b,34), (c,30), (a,23))
+
+    scala> wds.sortWith((x,y) => x._2 < y._2)
+    res38: List[(String, Int)] = List((a,23), (c,30), (b,34))
+
+    // grouped 方法,分组.传入一个数值,返回一个迭代器
+
+    scala> list.grouped
+       def grouped(size: Int): Iterator[List[Int]]
+
+    scala> list.grouped
+       def grouped(size: Int): Iterator[List[Int]]
+
+    scala> list.grouped(2).toList
+       def toList: List[List[Int]]
+
+    scala> list.grouped(2).toList
+    res42: List[List[Int]] = List(List(1, 2), List(3))
+
+    scala> list.grouped(1).toList
+    res43: List[List[Int]] = List(List(1), List(2), List(3))
+
+fold 叠加
+
+scala> list.fold
+   def fold[A1 >: Int](z: A1)(op: (A1, A1) => A1): A1
+
+scala> list.fold(10)((x,y) => x + y)
+res44: Int = 16
+
+scala> list
+res45: List[Int] = List(1, 2, 3)
+
+scala> list.fold(6)((x,y) => x + y)
+res46: Int = 12
+
+scala> list.fold(6)(_ + _)
+res49: Int = 12
+
+scala> list2
+res57: List[Int] = List(1, 2, 3, 22, 33, 44)
+
+// 1-(2-(3-(22-(33-(44-0)))))
+scala> list2.foldRight(0)(_ - _)
+res58: Int = -31
+
+// ((((((0-1)-2)-3)-22)-33)-44)
+scala> list2.foldLeft(0)(_ - _)
+res59: Int = -105
+
+// reverse 翻转
+scala> list.reverse
+res60: List[Int] = List(3, 2, 1)
+
+// reduce
+scala> list.reduce((x,y) => x+ y)
+res63: Int = 6
+
+// aggregate 方法签名  def aggregate[B](z: =>B)(seqop: (B, A) => B, combop: (B, B) => B): B = foldLeft(z)(seqop)
+// 调用的是foldLeft方法传入的是seqop函数,没有传入 combop 函数,在并行环境才会执行 .
+scala> list.aggregate
+   def aggregate[B](z: => B)(seqop: (B, Int) => B,combop: (B, B) => B): B
+
+scala> list.aggregate(0)(_ + _,_+_)
+res64: Int = 6
+
+// union 求并集
+
+scala> list.union(list2)
+res65: List[Int] = List(1, 2, 3, 1, 2, 3, 22, 33, 44)
+
+scala> list2.union(list)
+res66: List[Int] = List(1, 2, 3, 22, 33, 44, 1, 2, 3)
+
+//intersect 交集
+scala> list.intersect(list2)
+res67: List[Int] = List(1, 2, 3)
+
+//diff 相对于其他列表来说,你多了哪些值
+scala> list2.diff(list)
+res78: List[Int] = List(22, 33, 44)
+
+// head 头
+scala> list2.head
+res82: Int = 1
+
+//tail 尾 ; 除了头都是尾
+scala> list2.tail
+res83: List[Int] = List(2, 3, 22, 33, 44)
+
+//zip  拉链操作  元祖一一匹配
+scala> var r = list2.zip(list)
+r: List[(Int, Int)] = List((1,1), (2,2), (3,3))
+
+// mkString 格式化字符串
+scala> list2.mkString("-")
+res88: String = 1-2-3-22-33-44
+
+scala> list2.mkString(",")
+res89: String = 1,2,3,22,33,44
+
+scala> list2.mkString("|")
+res90: String = 1|2|3|22|33|44
