@@ -1,0 +1,120 @@
+
+mapParititionWithIndex
+
+一次读取一个分区进行处理
+
+分区中并没有数据,只是记录需要读取哪部分数据,真正生成的Task 会读取数据,并且可以将分区的编号取出来
+
+scala> var rdd = sc.parallelize(List(1,2,3,4,5,6,7,8,9),2)
+rdd: org.apache.spark.rdd.RDD[Int] = ParallelCollectionRDD[0] at parallelize at <console>:24
+
+scala>     var func = (index:Int,it:Iterator[Int]) => {
+     |       it.map(e => s"part: $index ,ele: $e")
+     |     }
+func: (Int, Iterator[Int]) => Iterator[String] = <function2>
+
+
+scala> var rdd2 = rdd.mapPartitionsWithIndex(func)
+rdd2: org.apache.spark.rdd.RDD[String] = MapPartitionsRDD[1] at mapPartitionsWithIndex at <console>:28
+
+scala> rdd2.collect
+res0: Array[String] = Array(part: 0 ,ele: 1, part: 0 ,ele: 2, part: 0 ,ele: 3, part: 0 ,ele: 4, part: 1 ,ele: 5, part: 1 ,ele: 6, part: 1 ,ele: 7, part: 1 ,ele: 8, part: 1 ,ele: 9)
+
+-------------------------------------------------------------------------------------
+
+scala> var rdd2 = sc.parallelize(List("q","a","z","x","c","f"),2)
+rdd2: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[2] at parallelize at <console>:24
+
+
+scala> def func2(index: Int, iter: Iterator[(String)]) : Iterator[String] = {
+     |   iter.toList.map(x => "[partID:" +  index + ", val: " + x + "]").iterator
+     | }
+func2: (index: Int, iter: Iterator[String])Iterator[String]
+
+scala> rdd2.mapPartitionsWithIndex(func2).collect
+res2: Array[String] = Array([partID:0, val: q], [partID:0, val: a], [partID:0, val: z], [partID:1, val: x], [partID:1, val: c], [partID:1, val: f])
+
+----------------------------------------------------------------------------------------------
+
+aggregate
+
+scala> var rdd1 = sc.parallelize(List(1,2,3,4,5,6,7,8,9),3)
+rdd1: org.apache.spark.rdd.RDD[Int] = ParallelCollectionRDD[4] at parallelize at <console>:24
+
+scala> rdd1.aggregate(0)(math.max(_,_),_+_)
+res5: Int = 18
+
+scala> rdd1.aggregate(6)(math.max(_,_),_+_)
+res6: Int = 27
+
+scala> rdd1.aggregate(7)(math.max(_,_),_+_)
+res7: Int = 30
+
+scala> val rdd2 = sc.parallelize(List("a","b","c","d","e","f"),2)
+rdd2: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[5] at parallelize at <console>:24
+
+scala> rdd2.aggregate("")(_ + _, _ + _)
+res8: String = abcdef
+
+scala> rdd2.aggregate("")(_ + _, _ + _)
+res9: String = abcdef
+
+scala> rdd2.aggregate("")(_ + _, _ + _)
+res10: String = defabc
+
+scala> rdd2.aggregate("")(_ + _, _ + _)
+res11: String = abcdef
+
+scala> rdd2.aggregate("|")(_ + _, _ + _)
+res12: String = ||abc|def
+
+scala> rdd2.aggregate("|")(_ + _, _ + _)
+res13: String = ||def|abc
+
+scala> rdd2.aggregate("|")(_ + _, _ + _)
+res14: String = ||abc|def
+
+-----------------------------------------------------------------------------------------------------
+
+scala> val rdd1 = sc.parallelize(List(("a", 1), ("b", 2), ("b", 2), ("c", 2), ("c", 1)))
+rdd1: org.apache.spark.rdd.RDD[(String, Int)] = ParallelCollectionRDD[11] at parallelize at <console>:24
+
+scala> rdd1.countByKey
+res18: scala.collection.Map[String,Long] = Map(b -> 2, a -> 1, c -> 2)
+
+-----------------------------------------------------------------------------------------------------
+
+filterByRange  包含边界
+
+scala> val rdd1 = sc.parallelize(List(("e", 5), ("c", 3), ("d", 4), ("c", 2), ("a", 1),("b",3)))
+rdd1: org.apache.spark.rdd.RDD[(String, Int)] = ParallelCollectionRDD[9] at parallelize at <console>:24
+
+scala> rdd1.filterByRange("b","d").collect
+res17: Array[(String, Int)] = Array((c,3), (d,4), (c,2), (b,3))
+
+-----------------------------------------------------------------------------------------------------
+
+flatMapValues
+
+scala> val a = sc.parallelize(List(("a", "1 2"), ("b", "3 4")))
+a: org.apache.spark.rdd.RDD[(String, String)] = ParallelCollectionRDD[6] at parallelize at <console>:24
+
+scala> a.flatMap
+flatMap   flatMapValues
+
+scala> a.flatMapValues(_.split(" ")).collect
+res15: Array[(String, String)] = Array((a,1), (a,2), (b,3), (b,4))
+
+
+-----------------------------------------------------------------------------------------------------
+
+foldByKey 跟 reduceByKey 相似,只是可以添加初始值
+
+scala> val rdd1 = sc.parallelize(List("dog", "wolf", "cat", "bear"), 2)
+rdd1: org.apache.spark.rdd.RDD[String] = ParallelCollectionRDD[31] at parallelize at <console>:24
+
+scala> var rdd2 = rdd1.map(x => (x.length,x))
+rdd2: org.apache.spark.rdd.RDD[(Int, String)] = MapPartitionsRDD[32] at map at <console>:26
+
+scala> rdd2.foldByKey("")(_+_).collect
+res40: Array[(Int, String)] = Array((4,bearwolf), (3,dogcat))
