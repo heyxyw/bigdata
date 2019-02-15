@@ -29,8 +29,9 @@ object ScalaWordCount {
     //切分压平
     val words: RDD[String] = lines.flatMap(_.split(" "))
 
+
     //按单词和一组合
-    val wordAndOne = words.map((_, 1))
+    val wordAndOne: RDD[(String, Int)] = words.map((_, 1))
 
     //按key 进行聚合
     val reduced: RDD[(String, Int)] = wordAndOne.reduceByKey(_ + _)
