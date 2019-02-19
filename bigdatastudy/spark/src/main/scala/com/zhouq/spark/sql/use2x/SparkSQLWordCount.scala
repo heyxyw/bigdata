@@ -1,4 +1,4 @@
-package com.zhouq.spark.sql._2x
+package com.zhouq.spark.sql.use2x
 
 import org.apache.spark.sql.{DataFrame, Dataset, Row, SparkSession}
 

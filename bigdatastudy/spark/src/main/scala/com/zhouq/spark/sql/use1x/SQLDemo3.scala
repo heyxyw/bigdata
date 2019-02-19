@@ -1,8 +1,8 @@
-package com.zhouq.spark.sql._1x
+package com.zhouq.spark.sql.use1x
 
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.{DataFrame, Row, SQLContext}
+import org.apache.spark.sql.{DataFrame, Dataset, Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -10,7 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
   *
   *
   */
-object SQLDemo2 {
+object SQLDemo3 {
   def main(args: Array[String]): Unit = {
 
     val conf: SparkConf = new SparkConf().setAppName("SQLDemo").setMaster("local[4]")
@@ -36,24 +36,24 @@ object SQLDemo2 {
     })
 
     //结果类型,其实就是表头,用来描述 DataFrame
-    val scama = StructType(List(
-      StructField("id",LongType,true),
-      StructField("name",StringType,true),
-      StructField("age",IntegerType,true),
-      StructField("fv",DoubleType,true)
+    val scahema = StructType(List(
+      StructField("id", LongType, true),
+      StructField("name", StringType, true),
+      StructField("age", IntegerType, true),
+      StructField("fv", DoubleType, true)
     ))
 
     //将 RowRDD 关联 schema
-    val bdf: DataFrame = sqlContext.createDataFrame(rowRDD, scama)
+    val bdf: DataFrame = sqlContext.createDataFrame(rowRDD, scahema)
 
-    //变成DF 后就可以使用两种API 进行编程了
-    // 把DataFrame 先进行注册临时表
-    bdf.registerTempTable("t_boy")
+    //不用sql 就可以不注册表
+    val df1: DataFrame = bdf.select("id", "name", "age", "fv")
 
-    //写 sql
-    val result: DataFrame = sqlContext.sql("select * from t_boy order by fv desc,age asc ")
+    import sqlContext.implicits._
+    //排序,需要引入隐式转换
+    val df2: Dataset[Row] = df1.orderBy($"fv" desc, $"age" asc)
 
-    result.show()
+    df2.show()
 
     sc.stop()
 

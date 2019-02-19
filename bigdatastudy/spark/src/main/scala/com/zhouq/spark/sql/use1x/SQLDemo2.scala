@@ -1,7 +1,8 @@
-package com.zhouq.spark.sql._1x
+package com.zhouq.spark.sql.use1x
 
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.types._
+import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
@@ -9,7 +10,7 @@ import org.apache.spark.{SparkConf, SparkContext}
   *
   *
   */
-object SQLDemo1 {
+object SQLDemo2 {
   def main(args: Array[String]): Unit = {
 
     val conf: SparkConf = new SparkConf().setAppName("SQLDemo").setMaster("local[4]")
@@ -25,20 +26,25 @@ object SQLDemo1 {
     val lines: RDD[String] = sc.textFile("H:\\bigdatatest\\spark\\persion")
 
     //将数据进行整理
-    val boyRDD: RDD[Boy] = lines.map(line => {
+    val rowRDD: RDD[Row] = lines.map(line => {
       val fileds: Array[String] = line.split(",")
       val id: Long = fileds(0).toLong
       val name: String = fileds(1)
       val age: Int = fileds(2).toInt
-      val fv: Int = fileds(3).toInt
-      Boy(id, name, age, fv)
+      val fv: Double = fileds(3).toDouble
+      Row(id, name, age, fv)
     })
 
-    //该RDD 里面装的是Boy 类型,有了scama 信心,但是还是一个普通的RDD
-    //将RDD 转化为 DataFrame
-    //导入隐式转换
-    import sqlContext.implicits._
-    val bdf: DataFrame = boyRDD.toDF()
+    //结果类型,其实就是表头,用来描述 DataFrame
+    val scama = StructType(List(
+      StructField("id",LongType,true),
+      StructField("name",StringType,true),
+      StructField("age",IntegerType,true),
+      StructField("fv",DoubleType,true)
+    ))
+
+    //将 RowRDD 关联 schema
+    val bdf: DataFrame = sqlContext.createDataFrame(rowRDD, scama)
 
     //变成DF 后就可以使用两种API 进行编程了
     // 把DataFrame 先进行注册临时表
@@ -54,5 +60,3 @@ object SQLDemo1 {
   }
 
 }
-
-case class Boy(id: Long, name: String, age: Int, fv: Int)
