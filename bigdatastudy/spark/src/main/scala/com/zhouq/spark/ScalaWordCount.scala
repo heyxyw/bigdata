@@ -4,7 +4,7 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
 /**
-  * Create by zhouq on 2019/1/27
+  * scala 版本实现 wc
   *
   */
 object ScalaWordCount {

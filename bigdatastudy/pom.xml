@@ -11,6 +11,8 @@
         <module>flink</module>
         <module>scala</module>
         <module>spark</module>
+        <module>kafka</module>
+        <module>cmmsProject</module>
     </modules>
     <name>bigdata-study</name>
     <url>http://maven.apache.org</url>

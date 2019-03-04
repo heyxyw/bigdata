@@ -1,7 +1,6 @@
 package com.zhouq.spark
 
 import java.net.URL
-
 import org.apache.spark.rdd.RDD
 import org.apache.spark.{SparkConf, SparkContext}
 
@@ -14,7 +13,6 @@ import org.apache.spark.{SparkConf, SparkContext}
   */
 object GroupFavTeacher2_cache_checkpoint {
   def main(args: Array[String]): Unit = {
-
 
     //前 N
     val topN = args(1).toInt
@@ -48,7 +46,7 @@ object GroupFavTeacher2_cache_checkpoint {
     val cached: RDD[((String, String), Int)] = reduced.cache()
 
     //第二种 使用checkpoint,得先设置 sc 的 checkpointDir
-//    cached.checkpoint()
+//   val cached: RDD[((String, String), Int)] = reduced.checkpoint()
 
     /**
       * 先对学科进行过滤,然后再进行排序,调用RDD 的sortBy进行排序,避免scala 的排序当数据量大时,内存不足的情况.

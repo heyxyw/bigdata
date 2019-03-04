@@ -12,8 +12,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 /**
- * Create by zhouq on 2019/1/27
- *
  * Java 版WordCount
  */
 public class JavaWordCount {
